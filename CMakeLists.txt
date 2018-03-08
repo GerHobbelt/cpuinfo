@@ -8,10 +8,10 @@ PROJECT(cpuinfo C CXX)
 # ---[ Options.
 SET(CPUINFO_LIBRARY_TYPE "default" CACHE STRING "Type of cpuinfo library (shared, static, or default) to build")
 SET_PROPERTY(CACHE CPUINFO_LIBRARY_TYPE PROPERTY STRINGS default static shared)
-OPTION(CPUINFO_BUILD_TOOLS "Build command-line tools" ON)
-OPTION(CPUINFO_BUILD_UNIT_TESTS "Build cpuinfo unit tests" ON)
-OPTION(CPUINFO_BUILD_MOCK_TESTS "Build cpuinfo mock tests" ON)
-OPTION(CPUINFO_BUILD_BENCHMARKS "Build cpuinfo micro-benchmarks" ON)
+OPTION(CPUINFO_BUILD_TOOLS "Build command-line tools" OFF)
+OPTION(CPUINFO_BUILD_UNIT_TESTS "Build cpuinfo unit tests" OFF)
+OPTION(CPUINFO_BUILD_MOCK_TESTS "Build cpuinfo mock tests" OFF)
+OPTION(CPUINFO_BUILD_BENCHMARKS "Build cpuinfo micro-benchmarks" OFF)
 
 # ---[ CMake options
 IF(CPUINFO_BUILD_UNIT_TESTS OR CPUINFO_BUILD_MOCK_TESTS)
