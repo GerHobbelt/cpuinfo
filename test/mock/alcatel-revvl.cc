@@ -46,6 +46,7 @@ TEST(PROCESSORS, package) {
 	}
 }
 
+#ifdef __linux__
 TEST(PROCESSORS, linux_id) {
 	for (uint32_t i = 0; i < cpuinfo_get_processors_count(); i++) {
 		switch (i) {
@@ -58,6 +59,7 @@ TEST(PROCESSORS, linux_id) {
 		}
 	}
 }
+#endif
 
 TEST(PROCESSORS, l1i) {
 	for (uint32_t i = 0; i < cpuinfo_get_processors_count(); i++) {

@@ -1,7 +1,7 @@
 #include <stdint.h>
 
-#if CPUINFO_MOCK
-	#include <cpuinfo-mock.h>
+#if (defined(CPUINFO_MOCK) && CPUINFO_MOCK)
+#include <cpuinfo-mock.h>
 #endif
 #include <arm/linux/api.h>
 #include <arm/linux/cp.h>
@@ -9,8 +9,8 @@
 #include <cpuinfo/log.h>
 
 
-#if CPUINFO_MOCK
-	uint32_t cpuinfo_arm_fpsid = 0;
+#if (defined(CPUINFO_MOCK) && CPUINFO_MOCK)
+uint32_t cpuinfo_arm_fpsid = 0;
 	uint32_t cpuinfo_arm_mvfr0 = 0;
 	uint32_t cpuinfo_arm_wcid = 0;
 

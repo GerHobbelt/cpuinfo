@@ -10,10 +10,9 @@
 	#include <sys/types.h>
 #endif
 
-#if !defined(CPUINFO_MOCK) || !(CPUINFO_MOCK)
-	#error This header is intended only for test use
-#endif
-
+#if !(defined(CPUINFO_MOCK) && CPUINFO_MOCK)
+#pragma message("This header is intended only for test use")
+#else
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,6 +72,8 @@ struct cpuinfo_mock_property {
 
 #ifdef __cplusplus
 } /* extern "C" */
+#endif
+
 #endif
 
 #endif /* CPUINFO_MOCK_H */

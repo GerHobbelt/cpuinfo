@@ -10,8 +10,8 @@
 #include <fcntl.h>
 #include <sched.h>
 
-#if CPUINFO_MOCK
-	#include <cpuinfo-mock.h>
+#if (defined(CPUINFO_MOCK) && CPUINFO_MOCK)
+#include <cpuinfo-mock.h>
 #endif
 #include <linux/api.h>
 #include <cpuinfo/log.h>

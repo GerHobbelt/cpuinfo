@@ -7,8 +7,8 @@
 	#include <intrin.h>
 #endif
 
-#if CPUINFO_MOCK
-	#include <cpuinfo-mock.h>
+#if (defined(CPUINFO_MOCK) && CPUINFO_MOCK)
+#include <cpuinfo-mock.h>
 #endif
 #include <x86/api.h>
 

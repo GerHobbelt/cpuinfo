@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#if !CPUINFO_MOCK
-	#error This file should be built only in mock mode
-#endif
+#if !(defined(CPUINFO_MOCK) && CPUINFO_MOCK)
+#pragma message("This file should be built only in mock mode")
+#else
 
 #include <cpuinfo-mock.h>
 
@@ -68,3 +68,5 @@ void CPUINFO_ABI cpuinfo_mock_get_cpuidex(uint32_t eax, uint32_t ecx, uint32_t r
 	}
 	regs[0] = regs[1] = regs[2] = regs[3] = 0;
 }
+
+#endif // (defined(CPUINFO_MOCK) && CPUINFO_MOCK)

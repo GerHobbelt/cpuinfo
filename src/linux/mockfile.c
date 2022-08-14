@@ -11,9 +11,9 @@
 #include <fcntl.h>
 #include <sched.h>
 
-#if !CPUINFO_MOCK
-	#error This file should be built only in mock mode
-#endif
+#if !(defined(CPUINFO_MOCK) && CPUINFO_MOCK)
+#pragma message("This file should be built only in mock mode")
+#else
 
 #include <cpuinfo-mock.h>
 #include <arm/linux/api.h>
@@ -103,3 +103,5 @@ ssize_t CPUINFO_ABI cpuinfo_mock_read(int fd, void* buffer, size_t capacity) {
 	cpuinfo_mock_files[fd].offset += count;
 	return (ssize_t) count;
 }
+
+#endif // (defined(CPUINFO_MOCK) && CPUINFO_MOCK)
