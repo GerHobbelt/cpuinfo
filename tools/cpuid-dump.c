@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <inttypes.h>
 #include <string.h>
@@ -38,7 +39,11 @@ static void print_cpuid_brand_string(struct cpuid_regs regs, uint32_t eax) {
 		eax, regs.eax, regs.ebx, regs.ecx, regs.edx, brand_string);
 }
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main		cpuinfo_cpuid_dump_main
+#endif
+
+int main(int argc, const char** argv) {
 	const uint32_t max_base_index = cpuid(0).eax;
 	uint32_t max_structured_index = 0, max_trace_index = 0, max_socid_index = 0;
 	bool has_sgx = false;
@@ -125,4 +130,5 @@ int main(int argc, char** argv) {
 				print_cpuid(cpuidex(eax, 0), eax);
 		}
 	}
+	return EXIT_SUCCESS;
 }

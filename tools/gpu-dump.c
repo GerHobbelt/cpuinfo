@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
+#if !defined(_WIN32)
+
 #include <dlfcn.h>
 
 #include <EGL/egl.h>
@@ -282,7 +285,7 @@ struct egl_config_attribute egl_config_attributes[] = {
 	},
 };
 
-void report_gles_attributes(void) {
+int report_gles_attributes(void) {
 	void* libEGL = NULL;
 	EGLConfig* configs = NULL;
 	EGLDisplay display = EGL_NO_DISPLAY;
@@ -291,6 +294,7 @@ void report_gles_attributes(void) {
 	EGLBoolean egl_init_status = EGL_FALSE;
 	EGLBoolean egl_make_current_status = EGL_FALSE;
 	EGLBoolean egl_status;
+	int rv = EXIT_FAILURE;
 
 	libEGL = dlopen("libEGL.so", RTLD_LAZY | RTLD_LOCAL);
 
@@ -424,6 +428,8 @@ void report_gles_attributes(void) {
 	printf("\t%s: \"%s\"\n", "GL_SHADING_LANGUAGE_VERSION", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	printf("\t%s: \"%s\"\n", "GL_EXTENSIONS", glGetString(GL_EXTENSIONS));
 
+	rv = EXIT_SUCCESS;
+
 cleanup:
 	if (egl_make_current_status == EGL_TRUE) {
 		eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -442,9 +448,15 @@ cleanup:
 	if (libEGL != NULL) {
 		dlclose(libEGL);
 	}
+	return rv;
 }
 
-int main(int argc, char** argv) {
-	report_gles_attributes();
-	return 0;
+#if defined(BUILD_MONOLITHIC)
+#define main		cpuinfo_gnu_dump_main
+#endif
+
+int main(int argc, const char** argv) {
+	return report_gles_attributes();
 }
+
+#endif

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if !defined(_WIN32)
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -12,11 +14,15 @@ char buffer[BUFFER_SIZE];
 
 #define CPUINFO_PATH "/proc/cpuinfo"
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main		cpuinfo_dump_main
+#endif
+
+int main(int argc, const char** argv) {
 	int file = open(CPUINFO_PATH, O_RDONLY);
 	if (file == -1) {
 		fprintf(stderr, "Error: failed to open %s: %s\n", CPUINFO_PATH, strerror(errno));
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	/* Only used for error reporting */
@@ -28,7 +34,7 @@ int main(int argc, char** argv) {
 		if (bytes_read < 0) {
 			fprintf(stderr, "Error: failed to read file %s at position %zu: %s\n",
 				CPUINFO_PATH, position, strerror(errno));
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 
 		position += (size_t) bytes_read;
@@ -39,7 +45,9 @@ int main(int argc, char** argv) {
 
 	if (close(file) != 0) {
 		fprintf(stderr, "Error: failed to close %s: %s\n", CPUINFO_PATH, strerror(errno));
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
 }
+
+#endif

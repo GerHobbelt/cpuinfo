@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if !defined(_WIN32)
+
 #include <sys/auxv.h>
 #include <errno.h>
 #include <dlfcn.h>
@@ -10,17 +12,21 @@
 
 typedef unsigned long (*getauxval_function_t)(unsigned long);
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main		cpuinfo_auxv_dump_main
+#endif
+
+int main(int argc, const char** argv) {
 	void* libc = dlopen("libc.so", RTLD_NOW);
 	if (libc == NULL) {
 		fprintf(stderr, "Error: failed to load libc.so: %s\n", dlerror());
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	getauxval_function_t getauxval = (getauxval_function_t) dlsym(libc, "getauxval");
 	if (getauxval == NULL) {
 		fprintf(stderr, "Error: failed to locate getauxval in libc.so: %s", dlerror());
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	printf("AT_HWCAP = 0x%08lX\n", getauxval(AT_HWCAP));
@@ -28,5 +34,7 @@ int main(int argc, char** argv) {
 		printf("AT_HWCAP2 = 0x%08lX\n", getauxval(AT_HWCAP2));
 	#endif
 
-	return 0;
+	return EXIT_SUCCESS;
 }
+
+#endif

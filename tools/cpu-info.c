@@ -278,10 +278,14 @@ static const char* uarch_to_string(enum cpuinfo_uarch uarch) {
 	}
 }
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main		cpuinfo_cpu_info_main
+#endif
+
+int main(int argc, const char** argv) {
 	if (!cpuinfo_initialize()) {
 		fprintf(stderr, "failed to initialize CPU information\n");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	#ifdef __ANDROID__
 		printf("SoC name: %s\n", cpuinfo_get_package(0)->name);
@@ -344,4 +348,5 @@ int main(int argc, char** argv) {
 			printf("\n");
 		#endif
 	}
+	return EXIT_SUCCESS;
 }

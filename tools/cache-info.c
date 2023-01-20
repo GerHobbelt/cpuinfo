@@ -55,10 +55,14 @@ void report_cache(
 	}
 }
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main		cpuinfo_cache_info_main
+#endif
+
+int main(int argc, const char** argv) {
 	if (!cpuinfo_initialize()) {
 		fprintf(stderr, "failed to initialize CPU information\n");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	printf("Max cache size (upper bound): %"PRIu32" bytes\n", cpuinfo_get_max_cache_size());
 
@@ -77,4 +81,5 @@ int main(int argc, char** argv) {
 	if (cpuinfo_get_l4_caches_count() != 0) {
 		report_cache(cpuinfo_get_l4_caches_count(), cpuinfo_get_l4_cache(0), 4, "data");
 	}
+	return EXIT_SUCCESS;
 }

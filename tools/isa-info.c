@@ -3,10 +3,14 @@
 
 #include <cpuinfo.h>
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main		cpuinfo_isa_info_main
+#endif
+
+int main(int argc, const char** argv) {
 	if (!cpuinfo_initialize()) {
 		fprintf(stderr, "failed to initialize CPU information\n");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 #if CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64
@@ -177,4 +181,5 @@ int main(int argc, char** argv) {
 		printf("\tCRC32: %s\n", cpuinfo_has_arm_crc32() ? "yes" : "no");
 #endif
 
+	return EXIT_SUCCESS;
 }
