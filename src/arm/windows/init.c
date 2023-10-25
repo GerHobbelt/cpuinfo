@@ -9,13 +9,10 @@
 
 #include "windows-arm-init.h"
 
-/* Efficiency class = 0 means little core, while 1 means big core for now */
-#define MAX_WOA_VALID_EFFICIENCY_CLASSES		2
-
 struct cpuinfo_arm_isa cpuinfo_isa;
 
 static void set_cpuinfo_isa_fields(void);
-static bool get_system_info_from_registry(
+static void get_system_info_from_registry(
 	struct woa_chip_info** chip_info);
 
 static struct woa_chip_info woa_chip_unknown = {
@@ -105,14 +102,14 @@ BOOL CALLBACK cpuinfo_arm_windows_init(
 	
 	set_cpuinfo_isa_fields();
 
-	const bool system_result = get_system_info_from_registry(&chip_info);
-	if (!system_result) {
+	get_system_info_from_registry(&chip_info);
+	if (chip_info == NULL) {
 		chip_info = &woa_chip_unknown;
 	}
 
 	cpuinfo_is_initialized = cpu_info_init_by_logical_sys_info(chip_info, chip_info->uarchs[0].vendor);
 
-	return (system_result && cpuinfo_is_initialized ? TRUE : FALSE);
+	return true;
 }
 
 bool get_core_uarch_for_efficiency(
@@ -137,7 +134,7 @@ bool get_core_uarch_for_efficiency(
 static bool read_registry(
 	LPCWSTR subkey,
 	LPCWSTR value,
-	char** text_buffer)
+	wchar_t** text_buffer)
 {
 	DWORD key_type = 0;
 	DWORD data_size = 0;
@@ -161,7 +158,7 @@ static bool read_registry(
 	if (*text_buffer) {
 		HeapFree(heap, 0, *text_buffer);
 	}
-	*text_buffer = HeapAlloc(heap, HEAP_ZERO_MEMORY, data_size * sizeof(wchar_t));
+	*text_buffer = HeapAlloc(heap, HEAP_ZERO_MEMORY, data_size);
 	if (*text_buffer == NULL) {
 		cpuinfo_log_error("Registry textbuffer allocation error");
 		return false;
@@ -182,11 +179,10 @@ static bool read_registry(
 	return true;
 }
 
-static bool get_system_info_from_registry(
+static void get_system_info_from_registry(
 	struct woa_chip_info** chip_info)
 {
-	bool result = false;
-	char* text_buffer = NULL;
+	wchar_t* text_buffer = NULL;
 	LPCWSTR cpu0_subkey = L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0";
 	LPCWSTR chip_name_value = L"ProcessorNameString";
 
@@ -216,7 +212,6 @@ static bool get_system_info_from_registry(
 cleanup:
 	HeapFree(heap, 0, text_buffer);
 	text_buffer = NULL;
-	return result;
 }
 
 static void set_cpuinfo_isa_fields(void)
