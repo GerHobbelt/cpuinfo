@@ -77,7 +77,7 @@ const struct cpuinfo_package* cpuinfo_get_packages(void) {
 	return cpuinfo_packages;
 }
 
-const struct cpuinfo_uarch_info* cpuinfo_get_uarchs() {
+const struct cpuinfo_uarch_info* cpuinfo_get_uarchs(void) {
 	if (!cpuinfo_is_initialized) {
 		cpuinfo_log_fatal("cpuinfo_get_%s called before cpuinfo is initialized", "uarchs");
 	}
