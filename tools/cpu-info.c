@@ -5,6 +5,8 @@
 
 #include <cpuinfo.h>
 
+#include "monolithic_examples.h"
+
 
 static const char* vendor_to_string(enum cpuinfo_vendor vendor) {
 	switch (vendor) {

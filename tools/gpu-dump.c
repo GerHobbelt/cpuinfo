@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "monolithic_examples.h"
+
+#if defined(BUILD_MONOLITHIC)
+#define main		cpuinfo_gnu_dump_main
+#endif
+
 #if !defined(_WIN32)
 
 #include <dlfcn.h>
@@ -451,12 +457,15 @@ cleanup:
 	return rv;
 }
 
-#if defined(BUILD_MONOLITHIC)
-#define main		cpuinfo_gnu_dump_main
-#endif
-
 int main(int argc, const char** argv) {
 	return report_gles_attributes();
+}
+
+#else
+
+int main(int argc, const char** argv) {
+	fprintf(stderr, "Error: no gpu_dump support.\n");
+	return EXIT_FAILURE;
 }
 
 #endif

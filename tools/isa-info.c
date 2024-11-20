@@ -3,6 +3,8 @@
 
 #include <cpuinfo.h>
 
+#include "monolithic_examples.h"
+
 #if defined(BUILD_MONOLITHIC)
 #define main		cpuinfo_isa_info_main
 #endif

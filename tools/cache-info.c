@@ -4,6 +4,8 @@
 
 #include <cpuinfo.h>
 
+#include "monolithic_examples.h"
+
 
 void report_cache(
 	uint32_t count, const struct cpuinfo_cache* cache,

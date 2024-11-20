@@ -6,6 +6,9 @@
 
 #include <x86/cpuid.h>
 
+#include "monolithic_examples.h"
+
+
 static void print_cpuid(struct cpuid_regs regs, uint32_t eax) {
 	printf("CPUID %08"PRIX32": %08"PRIX32"-%08"PRIX32"-%08"PRIX32"-%08"PRIX32"\n",
 		eax, regs.eax, regs.ebx, regs.ecx, regs.edx);

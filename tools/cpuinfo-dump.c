@@ -6,17 +6,23 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+
+#endif
+
 #include <errno.h>
 
-
-#define BUFFER_SIZE 4096
-char buffer[BUFFER_SIZE];
-
-#define CPUINFO_PATH "/proc/cpuinfo"
+#include "monolithic_examples.h"
 
 #if defined(BUILD_MONOLITHIC)
 #define main		cpuinfo_dump_main
 #endif
+
+#if !defined(_WIN32)
+
+#define BUFFER_SIZE 4096
+static char buffer[BUFFER_SIZE];
+
+#define CPUINFO_PATH "/proc/cpuinfo"
 
 int main(int argc, const char** argv) {
 	int file = open(CPUINFO_PATH, O_RDONLY);
@@ -48,6 +54,13 @@ int main(int argc, const char** argv) {
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
+}
+
+#else
+
+int main(int argc, const char** argv) {
+	fprintf(stderr, "Error: no cpuinfo_dump support.\n");
+	return EXIT_FAILURE;
 }
 
 #endif

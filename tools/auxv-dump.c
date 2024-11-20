@@ -7,8 +7,11 @@
 #include <errno.h>
 #include <dlfcn.h>
 
+#endif
+
 #include <cpuinfo.h>
 
+#include "monolithic_examples.h"
 
 typedef unsigned long (*getauxval_function_t)(unsigned long);
 
@@ -17,6 +20,7 @@ typedef unsigned long (*getauxval_function_t)(unsigned long);
 #endif
 
 int main(int argc, const char** argv) {
+#if !defined(_WIN32)
 	void* libc = dlopen("libc.so", RTLD_NOW);
 	if (libc == NULL) {
 		fprintf(stderr, "Error: failed to load libc.so: %s\n", dlerror());
@@ -35,6 +39,8 @@ int main(int argc, const char** argv) {
 	#endif
 
 	return EXIT_SUCCESS;
-}
-
+#else
+	printf("No getauxval(AT_HWCAP2) support.\n");
+	return EXIT_FAILURE;
 #endif
+}
