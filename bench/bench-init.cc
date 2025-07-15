@@ -4,7 +4,6 @@
 
 #include <cpuinfo.h>
 
-
 static void cpuinfo_initialize(benchmark::State& state) {
 	while (state.KeepRunning()) {
 		cpuinfo_initialize();
