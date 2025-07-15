@@ -1,3 +1,5 @@
+#define BENCHMARK_FAMILY_ID "CPUinfo-get"
+
 #include <benchmark/benchmark.h>
 
 #include <cpuinfo.h>
@@ -38,5 +40,10 @@ static void cpuinfo_get_current_uarch_index_with_default(benchmark::State& state
 	}
 }
 BENCHMARK(cpuinfo_get_current_uarch_index_with_default)->Unit(benchmark::kNanosecond);
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main   cpuinfo_benchmark_get_current_main
+#endif
 
 BENCHMARK_MAIN();
