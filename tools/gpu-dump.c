@@ -1,4 +1,3 @@
-#include <dlfcn.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +10,7 @@
 
 #if !defined(_WIN32)
 
+#include <dlfcn.h>
 
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
