@@ -689,7 +689,7 @@ TEST(L4, none) {
 
 #include <zenfone-2e.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char** argv) {
 	cpuinfo_mock_filesystem(filesystem);
 	cpuinfo_mock_set_cpuid(cpuid_dump, sizeof(cpuid_dump) / sizeof(cpuinfo_mock_cpuid));
 	cpuinfo_initialize();

@@ -8,6 +8,8 @@
 #include <freebsd/api.h>
 #include <x86/api.h>
 
+#if !defined(_WIN32)
+
 static inline uint32_t max(uint32_t a, uint32_t b) {
 	return a > b ? a : b;
 }
@@ -396,3 +398,5 @@ cleanup:
 	free(l3);
 	free(l4);
 }
+
+#endif

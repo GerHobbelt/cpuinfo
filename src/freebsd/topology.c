@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if !defined(_WIN32)
+
 #include <sys/sysctl.h>
 #include <sys/types.h>
 
@@ -98,3 +100,5 @@ fail:
 	topology.packages = 0;
 	return topology;
 }
+
+#endif

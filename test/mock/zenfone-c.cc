@@ -35,11 +35,15 @@ TEST(PROCESSORS, package) {
 	}
 }
 
+#if defined(__linux__)
+
 TEST(PROCESSORS, linux_id) {
 	for (uint32_t i = 0; i < cpuinfo_get_processors_count(); i++) {
 		ASSERT_EQ(i, cpuinfo_get_processor(i)->linux_id);
 	}
 }
+
+#endif
 
 TEST(PROCESSORS, l1i) {
 	for (uint32_t i = 0; i < cpuinfo_get_processors_count(); i++) {
@@ -689,7 +693,7 @@ TEST(L4, none) {
 
 #include <zenfone-c.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char** argv) {
 	cpuinfo_mock_filesystem(filesystem);
 	cpuinfo_mock_set_cpuid(cpuid_dump, sizeof(cpuid_dump) / sizeof(cpuinfo_mock_cpuid));
 	cpuinfo_initialize();

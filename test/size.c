@@ -1,6 +1,10 @@
 #include <cpuinfo.h>
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main  cpuinfo_test_size_main
+#endif
+
+int main(void) {
 	cpuinfo_initialize();
 	return 0;
 }
