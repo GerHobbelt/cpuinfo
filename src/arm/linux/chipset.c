@@ -953,7 +953,7 @@ static bool match_sc(const char* start, const char* end, struct cpuinfo_arm_chip
 }
 
 /**
- * Tries to match, case-sentitively, /Unisoc T\d{3,4}/ signature for Unisoc T
+ * Tries to match, case-sentitively, /Unisoc T\d{3,4}/ or /UNISOC T\d{3,4}/ signature for Unisoc T
  * chipset. If match successful, extracts model information into \p chipset
  * argument.
  *
@@ -967,7 +967,7 @@ static bool match_sc(const char* start, const char* end, struct cpuinfo_arm_chip
  * @returns true if signature matched, false otherwise.
  */
 static bool match_t(const char* start, const char* end, struct cpuinfo_arm_chipset chipset[restrict static 1]) {
-	/* Expect 11-12 symbols: "Unisoc T" (8 symbols) + 3-4-digit model number
+	/* Expect 11-12 symbols: "Unisoc T" / "UNISOC T" (8 symbols) + 3-4-digit model number
 	 */
 	const size_t length = end - start;
 	switch (length) {
@@ -978,16 +978,18 @@ static bool match_t(const char* start, const char* end, struct cpuinfo_arm_chips
 			return false;
 	}
 
-	/* Check that string starts with "Unisoc T". The first four characters
+	/* Check that string starts with "Unisoc T" or "UNISOC T". The first four characters
 	 * are loaded as 32-bit little endian word */
 	const uint32_t expected_unis = load_u32le(start);
-	if (expected_unis != UINT32_C(0x73696E55) /* "sinU" = reverse("Unis") */) {
+	if (expected_unis != UINT32_C(0x73696E55) /* "sinU" = reverse("Unis") */ &&
+	    expected_unis != UINT32_C(0x53494E55) /* "SINU" = reverse("UNIS") */) {
 		return false;
 	}
 
 	/* The next four characters are loaded as 32-bit little endian word */
 	const uint32_t expected_oc_t = load_u32le(start + 4);
-	if (expected_oc_t != UINT32_C(0x5420636F) /* "T co" = reverse("oc T") */) {
+	if (expected_oc_t != UINT32_C(0x5420636F) /* "T co" = reverse("oc T") */ &&
+	    expected_oc_t != UINT32_C(0x5420434F) /* "T CO" = reverse("OC T") */) {
 		return false;
 	}
 
@@ -4008,6 +4010,20 @@ static inline struct cpuinfo_arm_chipset disambiguate_spreadtrum_chipset(
 	return *ro_board_platform_chipset;
 }
 
+static enum cpuinfo_arm_chipset_vendor disambiguate_chipset_vendor(
+	enum cpuinfo_arm_chipset_vendor vendor_a,
+	enum cpuinfo_arm_chipset_vendor vendor_b) {
+	/* Some UNISOC-based platforms reporting conflicting vendor names depending
+	 * on the source. For phones that report both UNISOC and Spreadtrum, treat it
+	 * as UNISOC. */
+	if ((vendor_a == cpuinfo_arm_chipset_vendor_unisoc && vendor_b == cpuinfo_arm_chipset_vendor_spreadtrum) ||
+	    (vendor_a == cpuinfo_arm_chipset_vendor_spreadtrum && vendor_b == cpuinfo_arm_chipset_vendor_unisoc)) {
+		return cpuinfo_arm_chipset_vendor_unisoc;
+	}
+
+	return cpuinfo_arm_chipset_vendor_unknown;
+}
+
 /*
  * Decodes chipset name from Android system properties:
  * - /proc/cpuinfo Hardware string
@@ -4068,10 +4084,19 @@ struct cpuinfo_arm_chipset cpuinfo_arm_android_decode_chipset(
 			} else if (vendor != decoded_vendor) {
 				/* Parsing different system properties produces
 				 * different chipset vendors. This situation is
-				 * rare. */
-				cpuinfo_log_error(
-					"chipset detection failed: different chipset vendors reported in different system properties");
-				goto finish;
+				 * rare. Try to disambiguate for known cases,
+				 * otherwise treat as unknown. */
+
+				enum cpuinfo_arm_chipset_vendor disambiguated_vendor =
+					disambiguate_chipset_vendor(vendor, decoded_vendor);
+
+				if (disambiguated_vendor != cpuinfo_arm_chipset_vendor_unknown) {
+					vendor = disambiguated_vendor;
+				} else {
+					cpuinfo_log_error(
+						"chipset detection failed: different chipset vendors reported in different system properties");
+					goto finish;
+				}
 			}
 		}
 	}
