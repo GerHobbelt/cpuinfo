@@ -205,8 +205,10 @@ int main(int argc, const char** argv) {
 	printf("\tAtomics: %s\n", cpuinfo_has_riscv_a() ? "yes" : "no");
 	printf("\tSingle-Precision Floating-Point: %s\n", cpuinfo_has_riscv_f() ? "yes" : "no");
 	printf("\tDouble-Precision Floating-Point: %s\n", cpuinfo_has_riscv_d() ? "yes" : "no");
+	printf("\tHalf-Precision Floating-Point: %s\n", cpuinfo_has_riscv_zfh() ? "yes" : "no");
 	printf("\tCompressed: %s\n", cpuinfo_has_riscv_c() ? "yes" : "no");
 	printf("\tVector: %s\n", cpuinfo_has_riscv_v() ? "yes" : "no");
+	printf("\tVector Half-Precision Floating-Point: %s\n", cpuinfo_has_riscv_zvfh() ? "yes" : "no");
 #endif
 	return EXIT_SUCCESS;
 }
